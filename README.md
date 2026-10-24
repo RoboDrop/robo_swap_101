@@ -16,7 +16,8 @@ The project includes Python helpers for calibration and instrumented teleoperati
 | `diagnose_teleop.py` | Instrument teleoperation and save timing, observations, and actions |
 | `diagnostics/`, `diagnostics_startup.txt` | Recorded diagnostic output from local experiments |
 | `calibration_backups/` | Historical calibration backup; the included follower file is incomplete |
-| `design/tool_swapper_v1/` | CAD sources, exports, diagrams, preview, and geometric validation records |
+| `design/tool_swapper_v1/` | Original interrupted-screw coupling, pin lock, rack, CAD, and validation |
+| `design/tool_swapper_v2/` | Single-orientation keyhole coupling with three flared dowels, CAD, and validation |
 
 ## Robot setup
 
@@ -54,6 +55,12 @@ The launcher retries configuration writes at least three times and supplies `--r
 For an instrumented run, use `diagnose_teleop.py` with the same robot/teleop arguments plus `--teleop_time_s=5` and an explicit `--robot.max_relative_target` setting. The diagnostic script waits three seconds before recording; despite its name, the duration comes from the CLI argument. It overwrites `diagnostics/loop.txt`, `diagnostics/teleop_5s.json`, and `diagnostics/teleop_5s.log`.
 
 ## Tool swapper design
+
+The [second design](design/tool_swapper_v2/README.md) uses an asymmetric vertical key, a single-orientation entry slot, and an internal flared cavity that narrows through a 45° turn. Three headed dowels follow ramps for 0.8 mm nominal draw-in. This version removes the pin lock and retains the original SO-101 wrist mounting pattern. Physical fit and clamp preload require testing.
+
+![Design 2 keyhole coupling](design/tool_swapper_v2/diagrams/design_overview.png)
+
+Download the [v2 CAD, STL, and source package](design/tool_swapper_v2/SO101_tool_swapper_v2.zip), or use its individual files. The original design remains below.
 
 Start with the [detailed design README](design/tool_swapper_v1/README.md) for dimensions, docking sequence, proposed hardware, manufacturing considerations, and rebuild commands. Open `design/tool_swapper_v1/preview.html` in a browser for the included preview, or import the STEP/STL files from `cad/` into your CAD tool or slicer. A packaged copy is included as `SO101_tool_swapper_v1.zip`.
 
