@@ -1,0 +1,17 @@
+# Local Python environments and caches
+.venv/
+.cad-venv/
+.diagnostics/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# macOS metadata
+.DS_Store
+
+# Local credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
