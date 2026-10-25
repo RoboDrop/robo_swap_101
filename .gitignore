@@ -15,3 +15,11 @@ __pycache__/
 !.env.example
 *.pem
 *.key
+
+# VIAFLO locally built transport and packet transcripts
+tools/viaflo/bluetooth
+tools/viaflo/logs/
+
+# Local SO-101 sequence library (use browser Export for portable copies)
+data/sequences.json
+data/.sequences-*.json
