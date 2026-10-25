@@ -73,3 +73,15 @@ The mechanism uses a quarter-turn interrupted screw, a spring-return locking pin
 Robot dependencies are listed in `requirements.txt`; CAD dependencies and commands are documented separately in the design README. Local virtual environments, caches, macOS metadata, and credential files are excluded from Git.
 
 The upstream SO-101 reference CAD is attributed in the design README, with its Apache-2.0 license retained at [reference/LICENSE](design/tool_swapper_v1/reference/LICENSE) and provenance in `reference/upstream_commit.json`. No additional license is assigned to the original project files in this initial publication.
+
+## SO-101 robot visualizer
+
+The [local Robot View](robot_viewer/README.md) includes official follower and leader URDFs, STL meshes, joint sliders, orbit controls, and demo motion. It runs entirely as a visual simulation and does not connect to hardware. With Node.js 22.12+ installed, run from the repository root:
+
+```sh
+cd robot_viewer
+npm ci
+npm run dev -- --port 5173
+```
+
+Open http://127.0.0.1:5173/ and keep the terminal running. Drag to orbit, right-drag to pan, scroll to zoom, and use the sliders to move joints. See the [viewer instructions](robot_viewer/README.md) for model files, display options, production builds, and calibration notes.
