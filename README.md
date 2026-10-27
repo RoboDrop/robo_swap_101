@@ -1,157 +1,134 @@
-# robo_swap_101
+# Roboswap
 
-SO-101 leader/follower teleoperation experiments and a prototype quarter-turn tool swapper for the follower wrist.
+**Swap the tool, not the robot.** A tool changer for benchtop liquid handling, built around the SO-101 robot arm.
 
-The project includes a local browser-based Sequence Studio, Python helpers for calibration and teleoperation, VIAFLO pipettor control, recorded diagnostics, and CAD prototypes with STEP/STL exports and drawings.
+🏆 **Hackathon winner** · Built by Philip, Neil, Apurva, Maya, and Leo
 
-![Tool swapper assembly and sequence](design/tool_swapper_v1/diagrams/01_assembly_and_sequence.png)
+[Hardware demo](#teleoperated-hardware-demo) · [Design](#the-tool-changer) · [Animated simulations](#animated-simulations) · [Try it locally](#try-it-without-a-robot)
 
-## Project contents
+## The problem
 
-| Path | Purpose |
+Lab work involves more than pipetting. A single workflow can require moving labware, dispensing liquids, changing tips, and opening tubes. Dedicated liquid-handling stations organize these tasks around a fixed deck; a robot arm offers more freedom, but its usefulness still depends on the tool at its wrist.
+
+Roboswap explores a different setup: **one benchtop arm that can pick up the tool each step needs**. Start with an electronic pipette, then extend the same idea to multichannel pipettes, grippers, and decappers. Those additional tools are the direction we want to take, rather than capabilities demonstrated by this prototype.
+
+![Roboswap on the hackathon bench: SO-101 arms, electronic pipette, printed attachments, and labware](docs/media/roboswap-bench.jpg)
+
+## Teleoperated hardware demo
+
+We demonstrated pipette attachment with an SO-101 leader/follower pair: a person moves the leader arm, and the follower mirrors that motion at the bench.
+
+<p align="center">
+  <a href="docs/media/teleoperation-demo.mp4">
+    <img src="docs/media/teleoperation-demo.gif" width="280" alt="Real hardware: a teleoperated SO-101 attaches to and lifts an electronic pipette from its holder">
+  </a>
+</p>
+
+<p align="center">
+  <a href="docs/media/teleoperation-demo.mp4">Watch the full 45-second demo</a> · <a href="https://drive.google.com/file/d/1_4_yJLBgcuWlU159tA-3w_Z1VML-Q9Xl/view">Original recording on Drive</a>
+</p>
+
+The loop is an excerpt from our hackathon recording, at its original speed. **This is teleoperation:** reliable autonomous tool pickup is still an open problem for the project.
+
+## The tool changer
+
+Our hackathon build paired an **SO-101 arm, an Integra electronic pipette, a 3D-printed attachment, and a simple wooden pipette holder**. We explored both gripping a collar with the stock jaws and replacing the wrist attachment with a dedicated coupling.
+
+The CAD in this repository develops that coupling through several iterations. The latest [v4 design](design/tool_swapper_v4_flared_pipette/README.md) combines:
+
+- **A keyed wrist mount:** an asymmetric central key sets the entry orientation, with three headed dowels around it.
+- **An insert-and-turn connection:** a nominal 45° turn follows ramped tracks for 0.8 mm of axial draw-in. Reverse the turn to release.
+- **A pipette collar:** a compact round receiver joins the fitted 31 mm collar; a 5 mm wrist spacer preserves access to the mounting screws.
+- **Printable parts and inspectable geometry:** STL files, available STEP exports, source scripts, dimensions, and nominal fit checks live alongside the design.
+
+This CAD iteration is separate from the hardware footage above. It has **no positive anti-rotation latch**, and physical fit, preload, payload, and cycle life remain unqualified.
+
+## Animated simulations
+
+<table>
+  <tr>
+    <th>Coupling: insert, turn, release</th>
+    <th>Sequence Studio: preview a motion plan</th>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/media/coupling-simulation.gif" alt="V4 CAD animation of the keyed wrist mount entering the translucent pipette receiver, turning 45 degrees, and withdrawing"></td>
+    <td width="50%"><img src="docs/media/sequence-simulation.gif" alt="Sequence Studio animating a translucent SO-101 arm along a three-position path, with a preview timeline"></td>
+  </tr>
+  <tr>
+    <td>Rendered from the actual v4 meshes and assembly transforms. The receiver is translucent to reveal the engagement. This shows nominal geometry.</td>
+    <td>Captured from the running simulator with an illustrative three-position sequence. The solid arm marks the starting pose; the translucent arm previews the planned motion.</td>
+  </tr>
+</table>
+
+### Teach, plan, preview, play
+
+[Sequence Studio](robot_viewer/README.md) is the browser interface for teaching movements and trying sequences before running them on the follower:
+
+1. **Teach** named positions with the leader arm, or use joint sliders in simulation.
+2. **Arrange** saved positions, reorder steps, and set dwell times.
+3. **Plan and preview** smooth joint trajectories with a tool path and timeline. A relative pickup-tip action adds a modeled 3 mm down/up stroke.
+4. **Execute** the stored plan in simulation, or explicitly connect a calibrated follower for hardware playback.
+
+Sequences save locally and support JSON import/export. Simulation works without a connected arm. Preview and playback use the same stored plan, but the planner does not check collisions or guarantee physical positioning accuracy.
+
+[View the full Studio interface](docs/media/sequence-studio.jpg)
+
+## What worked, and what comes next
+
+| Area | Hackathon result / current status |
 | --- | --- |
-| `arms.json` | Recorded leader/follower USB identities, macOS serial ports, and calibration IDs |
-| `calibrate_arm.py` | Calibrate one arm after connecting the bus and disabling torque |
-| `teleoperate_arms.py` | LeRobot launcher with target smoothing, speed limits, and bounded write retries |
-| `diagnose_teleop.py` | Instrument teleoperation and save timing, observations, and actions |
-| `diagnostics/`, `diagnostics_startup.txt` | Recorded diagnostic output from local experiments |
-| `calibration_backups/` | Historical calibration backup; the included follower file is incomplete |
-| `design/tool_swapper_v1/` | Original interrupted-screw coupling, pin lock, rack, CAD, and validation |
-| `design/tool_swapper_v2/` | Single-orientation keyhole coupling with three flared dowels, CAD, and validation |
-| `design/tool_swapper_v3/` | Fitted SO-101 male and 31 mm pipette collar |
-| `design/tool_swapper_v3_thin_wall/` | Reinforced male compatible with the fitted v3 collar |
-| `design/tool_swapper_v4_flared_pipette/` | Flared-dowel coupling with a compact pipette receiver and 5 mm spacer |
-| `robot_viewer/` | Sequence Studio browser UI and standalone model explorer |
-| `so101_studio/` | Local Python server, persistence, trajectory planner, and hardware adapters |
-| `tools/viaflo/`, `viaflo_control.py` | VIAFLO terminal controller and native macOS Bluetooth transport |
-| `tests/` | Hardware-free Studio and VIAFLO regression tests |
+| Pipette attachment | Demonstrated through leader/follower teleoperation. |
+| Motion sequencing | Save positions, plan paths, and preview them in simulation. |
+| Mechanical locking | Friction and print tolerances made attachment finicky. A more robust locking mechanism is a priority. |
+| Automatic docking | The SO-101 setup was not precise enough for reliable automated attachment. Better positioning and feedback remain future work. |
+| Vision | The presentation showed standalone ChArUco camera calibration, pose tracking, and tip detection. Camera feedback was not integrated into robot control. |
 
-## Robot setup
+The next steps are a reliable tool lock, repeatable docking with a higher-precision arm or improved feedback, and integration of the vision work. The goal is to make tool changes dependable enough to build larger lab workflows around them.
 
-The local robot environment used Python 3.12 and LeRobot 0.6.1. Create an isolated environment and install the robot dependencies:
+## Try it without a robot
+
+Use **Node.js 22.12+** to build the browser. The simulation backend uses only Python's standard library; Python 3.12 was used for development.
 
 ```sh
-uv venv --python 3.12 .venv
-uv pip install --python .venv/bin/python -r requirements.txt
-source .venv/bin/activate
-```
+git clone https://github.com/RoboDrop/robo_swap_101.git
+cd robo_swap_101
 
-Before running hardware, identify your own serial devices and calibration IDs. Sequence Studio loads the role assignments in `arms.json`; these now match follower `5A7A055478` and leader `5A7A056103`. The standalone calibration and teleoperation scripts do **not** load `arms.json` automatically: update their hard-coded settings or CLI arguments separately. The CLI examples below describe the original bench setup.
-
-Calibrate each arm with its motion area clear and the arm supported as needed:
-
-```sh
-python calibrate_arm.py leader
-python calibrate_arm.py follower
-```
-
-Example teleoperation using the recorded macOS ports (replace them and the IDs for your hardware):
-
-```sh
-python teleoperate_arms.py \
-  --robot.type=so101_follower \
-  --robot.port=/dev/cu.usbmodem5A7A0547771 \
-  --robot.id=so101_follower_5A7A054777 \
-  --teleop.type=so101_leader \
-  --teleop.port=/dev/cu.usbmodem5A680086601 \
-  --teleop.id=so101_leader_5A68008660 \
-  --fps=30 \
-  --smooth-tau=0.06 --smooth-deadband=0.2 --smooth-speed=80
-```
-
-The launcher smooths position targets with a 60 ms low-pass time constant, a 0.2-unit deadband, and an 80-unit/second command speed limit. Units are LeRobot calibrated position units, not necessarily degrees. It starts targets at the observed follower position and uses the targets accepted by the follower for subsequent updates. After a loop stall, the speed allowance is capped at one 30 Hz frame to avoid a large catch-up step. Smoothing adds some response lag; increase `--smooth-tau` for stronger filtering or reduce it for quicker response. These options take effect when restarting the launcher. They cannot fix mechanical play, power problems, or servo oscillation while holding still.
-
-The launcher retries configuration writes at least three times and supplies `--robot.max_relative_target` defaults of 10 for shoulder pan/lift, elbow flex, and wrist roll, and 20 for wrist flex and gripper. An explicit `--robot.max_relative_target` argument overrides these defaults. These limits do not establish collision safety.
-
-For an instrumented run, use `diagnose_teleop.py` with the same robot/teleop arguments plus `--teleop_time_s=5` and an explicit `--robot.max_relative_target` setting. The diagnostic script waits three seconds before recording; despite its name, the duration comes from the CLI argument. It overwrites `diagnostics/loop.txt`, `diagnostics/teleop_5s.json`, and `diagnostics/teleop_5s.log`.
-
-## VIAFLO pipettor terminal control
-
-The imported Generation 3 controller provides identity/status, aspirate, dispense,
-dry cycle, and purge through a terminal prompt. It currently verifies the existing
-125 µL single-channel pipette (SN 07064070). On the pipette select **PC Control
-(ComM)**, then run from this repository:
-
-```sh
-python3 viaflo_control.py build
-python3 viaflo_control.py paired
-python3 viaflo_control.py shell --address 00-16-a4-4c-9a-ac
-```
-
-Use `help` in the prompt. After physically verifying empty, `confirm-empty`
-initializes the session's volume tracking; `cycle 5` performs a 5 µL dry test
-with the tip out of liquid. `aspirate 10` and `dispense 10` command µL at speed 1.
-See [setup, commands, and device limits](tools/viaflo/README.md) before operating.
-The native Bluetooth helper builds on macOS; serial support has a separate
-`requirements-viaflo.txt`. No host network settings are changed.
-
-## Tool swapper design
-
-The latest [v4 flared pipette design](design/tool_swapper_v4_flared_pipette/README.md)
-combines the v2 keyed flared-dowel coupling with a 31 mm pipette collar, compact
-round receiver, and 5 mm wrist spacer. Its README identifies the printable pair,
-assembly orientation, STEP export limitations, and geometry validation results.
-
-The [fitted v3 pair](design/tool_swapper_v3/README.md) and its
-[thin-wall male variant](design/tool_swapper_v3_thin_wall/README.md) remain
-available. Use the matching parts specified in each design README; the thin-wall
-variant has different screw-head clearance. These are unqualified prototypes,
-not interchangeable production releases.
-
-The [second design](design/tool_swapper_v2/README.md) uses an asymmetric vertical key, a single-orientation entry slot, and an internal flared cavity that narrows through a 45° turn. Three headed dowels follow ramps for 0.8 mm nominal draw-in. This version removes the pin lock and retains the original SO-101 wrist mounting pattern. Physical fit and clamp preload require testing.
-
-![Design 2 keyhole coupling](design/tool_swapper_v2/diagrams/design_overview.png)
-
-Download the [v2 CAD, STL, and source package](design/tool_swapper_v2/SO101_tool_swapper_v2.zip), or use its individual files. The original design remains below.
-
-Start with the [detailed design README](design/tool_swapper_v1/README.md) for dimensions, docking sequence, proposed hardware, manufacturing considerations, and rebuild commands. Open `design/tool_swapper_v1/preview.html` in a browser for the included preview, or import the STEP/STL files from `cad/` into your CAD tool or slicer. A packaged copy is included as `SO101_tool_swapper_v1.zip`.
-
-The mechanism uses a quarter-turn interrupted screw, a spring-return locking pin/yoke, and an open-top rack. The receiver includes an unfinished tool blank; a pipette holder or actuator is not implemented.
-
-**Prototype status:** CAD checks cover sampled geometry and interference only. The parts have no verified payload, strength, backlash, or cycle-life rating. Fit-check by hand before powered trials. Robot scripts can move hardware; keep the workspace clear and support the follower when torque is disabled. Removing the gripper motor may require changes to the robot motor configuration.
-
-## Dependencies and licensing
-
-Robot dependencies are listed in `requirements.txt`; CAD dependencies and commands are documented separately in the design README. Local virtual environments, caches, macOS metadata, and credential files are excluded from Git.
-
-The upstream SO-101 reference CAD is attributed in the design README, with its Apache-2.0 license retained at [reference/LICENSE](design/tool_swapper_v1/reference/LICENSE) and provenance in `reference/upstream_commit.json`. No additional license is assigned to the original project files in this initial publication.
-
-## SO-101 robot visualizer
-
-### Position recorder and sequence player
-
-The [Sequence Studio](robot_viewer/README.md) adds browser-based leader/follower
-teleoperation, named follower pose capture, autosaved sequence libraries,
-drag-to-reorder steps, dwell times, a smooth joint-space planner, Cartesian
-pickup-tip actions (3 mm down/up in base Z), a translucent 3D preview with tool
-paths, and guarded follower playback. Simulation is available
-without connected hardware. The original standalone visualizer remains at
-`/model-viewer.html`.
-
-Build the browser with `cd robot_viewer && npm ci && npm run build`, then from the
-repository root start `.venv/bin/python -m so101_studio --enable-hardware` and open
-**http://127.0.0.1:8766**. Startup stays in simulation; connecting and moving an arm
-require explicit browser actions. Omit `--enable-hardware` for simulation only.
-The planner bounds joint commands but does not check collisions. See the linked
-instructions for calibration, Stop/hold behavior, and the physical setup workflow.
-
-### Original standalone model explorer
-
-The original Robot View includes official follower and leader URDFs, STL meshes, joint sliders, orbit controls, and demo motion. This separate page runs entirely as a visual simulation and does not connect to hardware. With Node.js 22.12+ installed, run from the repository root:
-
-```sh
 cd robot_viewer
 npm ci
-npm run dev -- --port 5173
+npm run build
+cd ..
+
+python3 -m so101_studio
 ```
 
-Open http://127.0.0.1:5173/model-viewer.html and keep the terminal running. Drag to orbit, right-drag to pan, scroll to zoom, and use the sliders to move joints. See the [viewer instructions](robot_viewer/README.md) for model files, display options, production builds, and calibration notes.
+Open **[http://127.0.0.1:8766](http://127.0.0.1:8766)**. Move the joint sliders, record a few positions, and select **Plan sequence → Preview**. The server starts in simulation with hardware disabled.
 
-## Development and verification
+For the original model explorer with joint sliders and demo motion, open **[http://127.0.0.1:8766/model-viewer.html](http://127.0.0.1:8766/model-viewer.html)**.
 
-See the [backend development guide](so101_studio/README.md) for module ownership,
-server options, and local data handling. After installing the browser dependencies,
-run the complete hardware-free regression suite and production build:
+### Connect your own hardware
+
+Start with the [hardware setup guide](docs/hardware-setup.md) for LeRobot installation, calibration, command-line teleoperation, and VIAFLO pipettor control. Then follow the [Studio connection and playback guide](robot_viewer/README.md).
+
+Configure your own USB identities and calibration IDs before connecting. `arms.json` describes our bench setup; the standalone CLI scripts have separate settings. Hardware access requires `--enable-hardware` and explicit connection in the browser. Keep the motion area clear and physical power control accessible; software Stop is a hold command, not a physical emergency stop.
+
+## Explore the repository
+
+| Component | Where to start |
+| --- | --- |
+| Browser interface and 3D simulation | [Sequence Studio](robot_viewer/README.md) |
+| Local API, storage, planner, and hardware adapters | [Backend guide](so101_studio/README.md) |
+| Calibration and teleoperation | [Hardware setup](docs/hardware-setup.md), [teleoperate_arms.py](teleoperate_arms.py) |
+| Electronic pipette control | [VIAFLO controller](tools/viaflo/README.md) |
+| Latest printable coupling and pipette collar | [v4 flared pipette design](design/tool_swapper_v4_flared_pipette/README.md) |
+| Earlier CAD iterations | [v1 interrupted screw](design/tool_swapper_v1/README.md), [v2 keyed coupling](design/tool_swapper_v2/README.md), [v3 fitted pair](design/tool_swapper_v3/README.md), [thin-wall variant](design/tool_swapper_v3_thin_wall/README.md) |
+| Hardware-free regression tests | [tests/](tests/) |
+| Demo assets and provenance | [Media notes](docs/media/README.md) |
+
+Use the matching parts specified in each design's README. Variants are prototypes with different fits and clearances, not interchangeable releases.
+
+## Development
+
+After installing the robot dependencies described in the [setup guide](docs/hardware-setup.md) and the browser dependencies above:
 
 ```sh
 .venv/bin/python -m unittest discover -s tests -v
@@ -159,11 +136,10 @@ cd robot_viewer
 npm run build
 ```
 
-The tests use simulated devices and fake transports; they do not commission real
-hardware. CAD validation reports document separate geometry checks and are not
-regenerated by this test suite. Rebuild commands and dependencies live in each
-CAD variant's README.
+Tests use simulated devices and fake transports. CAD checks are separate; rebuild instructions and dependencies are in each design directory. Local sequence libraries, virtual environments, generated browser bundles, credentials, and packet logs are ignored by Git. Export important sequences from Studio or back up `data/sequences.json`.
 
-Generated browser bundles, installed dependencies, virtual environments, local
-sequence libraries, credentials, and VIAFLO packet logs remain ignored by Git.
-Export important sequences from Studio or back up `data/sequences.json` separately.
+## Team and acknowledgments
+
+Built by **Philip, Neil, Apurva, Maya, and Leo**. Thanks to **Mark** for help with 3D printing.
+
+Roboswap builds on the SO-101 platform and LeRobot. Upstream model provenance and Apache-2.0 licensing are retained with the [robot models](robot_viewer/public/robots/so101/README.md) and [reference CAD](design/tool_swapper_v1/reference/LICENSE). No additional license has been assigned to the original project files.
