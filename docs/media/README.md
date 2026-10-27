@@ -6,7 +6,7 @@ These assets distinguish recorded hardware behavior from simulated motion. The m
 | --- | --- |
 | `roboswap-bench.jpg` | The bench photograph embedded on slide 5 of `oct25 studio45 hack presentation.pptx` (`ppt/media/image14.png`), resized and JPEG-compressed. |
 | `teleoperation-demo.mp4` | The complete `IMG_9089.MOV` recording linked from slide 9, transcoded to H.264/AAC at 540 px wide with metadata removed. Duration approximately 44.7 seconds; original timing retained. |
-| `teleoperation-demo.gif` | Seconds 8–18 of that recording, sampled at 8 fps and 280 px wide. Silent looping excerpt at original speed. |
+| `pipette-pickup.gif` | Seconds 14–25 of that recording, sampled at 8 fps and 280 px wide. Silent looping excerpt at original speed, showing the pipette lifting clear of its holder and moving over the bench. |
 | `coupling-simulation.gif` | A 10-second VTK render of the repository's actual v4 STL meshes, sampled at 16 fps. The receiver is translucent; the male follows the assembly transform in the v4 build script. No dynamics, forces, or physical validation are implied. |
 | `sequence-simulation.gif` | Browser capture of Sequence Studio in simulation only, showing a three-position plan. The preview timeline is sampled across the approximately 5.64-second plan at its nominal timing. |
 | `sequence-studio.jpg` | Full interface capture from the same isolated simulation session. |

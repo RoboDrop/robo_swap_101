@@ -20,7 +20,7 @@ We demonstrated pipette attachment with an SO-101 leader/follower pair: a person
 
 <p align="center">
   <a href="docs/media/teleoperation-demo.mp4">
-    <img src="docs/media/teleoperation-demo.gif" width="280" alt="Real hardware: a teleoperated SO-101 attaches to and lifts an electronic pipette from its holder">
+    <img src="docs/media/pipette-pickup.gif" width="280" alt="Real hardware: a teleoperated SO-101 lifts an electronic pipette from its holder and carries it over the bench">
   </a>
 </p>
 
@@ -28,7 +28,7 @@ We demonstrated pipette attachment with an SO-101 leader/follower pair: a person
   <a href="docs/media/teleoperation-demo.mp4">Watch the full 45-second demo</a> · <a href="https://drive.google.com/file/d/1_4_yJLBgcuWlU159tA-3w_Z1VML-Q9Xl/view">Original recording on Drive</a>
 </p>
 
-The loop is an excerpt from our hackathon recording, at its original speed. **This is teleoperation:** reliable autonomous tool pickup is still an open problem for the project.
+The loop shows the pipette lifting out of its holder and moving over the bench, excerpted from our hackathon recording at its original speed. **This is teleoperation:** reliable autonomous tool pickup is still an open problem for the project.
 
 ## The tool changer
 
